@@ -1,11 +1,9 @@
 package com.qizhi.warehouse.dao;
 
 import com.qizhi.warehouse.domain.Warehouse;
-import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
-@Mapper
 public interface WarehouseMapper {
     int deleteByPrimaryKey(Integer warehouseId);
 

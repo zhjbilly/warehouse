@@ -8,11 +8,12 @@
         <version>2.2.1.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>org.qizhi</groupId>
+    <groupId>com.qizhi</groupId>
     <artifactId>warehouse</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>warehouse</name>
     <description>warehouse</description>
+    <packaging>jar</packaging>
     <url/>
     <licenses>
         <license/>
@@ -31,7 +32,6 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <druid.version>1.2.20</druid.version>
-        <lombok.version>1.18.4</lombok.version>
         <dubbo.version>2.0.0</dubbo.version>
         <zk.version>0.11</zk.version>
         <swagger.version>2.9.2</swagger.version>
@@ -62,6 +62,13 @@
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>2.0.0</version>
+        </dependency>
+
+        <!-- 三方服务 -->
+        <dependency>
+            <groupId>com.qizhi</groupId>
+            <artifactId>user</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
         <!-- 阿里数据库连接池 -->
@@ -149,7 +156,7 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.8</version>
+                            <version>1.18.20</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
@@ -158,6 +165,8 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <!-- TODO 部署打包时需要去除-->
+                    <classifier>exec</classifier>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
@@ -178,6 +187,7 @@
                 <executions>
                     <execution>
                         <id>Generate MyBatis Artifacts</id>
+                        <phase>deploy</phase>
                         <goals>
                             <goal>generate</goal>
                         </goals>

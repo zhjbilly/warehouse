@@ -10,11 +10,12 @@ public interface IWarehouseService {
     /**
      * 仓库注册
      *
+     * @param token
      * @param warehouseType
      * @param locationX
      * @param locationY
      */
-    void registerWarehouse(String warehouseType, int locationX, int locationY);
+    void registerWarehouse(String token, String warehouseType, int locationX, int locationY);
 
     /**
      * 删除仓库
