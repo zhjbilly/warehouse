@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qizhi.warehouse.dao.GoodsReceiptMapper">
+  <resultMap id="BaseResultMap" type="com.qizhi.warehouse.domain.GoodsReceipt">
+    <id column="receipt_id" jdbcType="INTEGER" property="receiptId" />
+    <result column="is_closed" jdbcType="TINYINT" property="isClosed" />
+    <result column="close_date_time" jdbcType="TIMESTAMP" property="closeDateTime" />
+    <result column="supplier" jdbcType="VARCHAR" property="supplier" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    receipt_id, is_closed, close_date_time, supplier
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from goods_receipt
+    where receipt_id = #{receiptId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from goods_receipt
+    where receipt_id = #{receiptId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="receiptId" parameterType="com.qizhi.warehouse.domain.GoodsReceipt">
+    insert into goods_receipt (receipt_id, is_closed, close_date_time, 
+      supplier)
+    values (#{receiptId,jdbcType=INTEGER}, #{isClosed,jdbcType=TINYINT}, #{closeDateTime,jdbcType=TIMESTAMP}, 
+      #{supplier,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.qizhi.warehouse.domain.GoodsReceipt">
+    update goods_receipt
+    set is_closed = #{isClosed,jdbcType=TINYINT},
+      close_date_time = #{closeDateTime,jdbcType=TIMESTAMP},
+      supplier = #{supplier,jdbcType=VARCHAR}
+    where receipt_id = #{receiptId,jdbcType=INTEGER}
+  </update>
+  <!-- -->
+  <select id="countNotClosed" resultType="java.lang.Integer">
+    select count(1) from goods_receipt where is_closed = 0
+  </select>
+</mapper>

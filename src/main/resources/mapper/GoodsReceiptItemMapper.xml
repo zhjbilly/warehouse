@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qizhi.warehouse.dao.GoodsReceiptItemMapper">
+  <resultMap id="BaseResultMap" type="com.qizhi.warehouse.domain.GoodsReceiptItem">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="receipt_id" jdbcType="INTEGER" property="receiptId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="amount" jdbcType="INTEGER" property="amount" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, receipt_id, name, amount, price
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from goods_receipt_item
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from goods_receipt_item
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.qizhi.warehouse.domain.GoodsReceiptItem">
+    insert into goods_receipt_item (id, receipt_id, name, 
+      amount, price)
+    values (#{id,jdbcType=INTEGER}, #{receiptId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+      #{amount,jdbcType=INTEGER}, #{price,jdbcType=DECIMAL})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.qizhi.warehouse.domain.GoodsReceiptItem">
+    update goods_receipt_item
+    set receipt_id = #{receiptId,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      amount = #{amount,jdbcType=INTEGER},
+      price = #{price,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <!-- -->
+  <insert id="batchInsert">
+    insert into goods_receipt_item (receipt_id, name,
+      amount, price)
+    VALUES
+    <foreach collection="records" item="item" separator=",">
+      (#{item.receiptId},#{item.name},#{item.amount},#{item.price})
+    </foreach>
+  </insert>
+</mapper>

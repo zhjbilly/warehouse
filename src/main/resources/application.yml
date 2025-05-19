@@ -38,11 +38,11 @@ spring:
     username: root
     password: 111111
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/warehouse
+    url: jdbc:mysql://localhost:3306/warehouse?characterEncoding=utf-8
     type: com.alibaba.druid.pool.DruidDataSource
   dubbo:
     application:
-      name: dubbo-provider
+      name: warehouse
     registry:
       protocol: zookeeper
       address: 127.0.0.1:2181
