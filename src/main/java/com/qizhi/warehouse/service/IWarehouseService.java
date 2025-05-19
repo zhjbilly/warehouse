@@ -19,15 +19,15 @@ public interface IWarehouseService {
 
     /**
      * 删除仓库
-     * @param userId
+     * @param token
      * @param warehouseId
      */
-    void deleteWarehouse(int warehouseId, int userId);
+    void deleteWarehouse(String token, int warehouseId);
 
     /**
      * 仓库列表
      * @return
      */
-    List<WareHouseDTO> listWarehoust();
+    List<WareHouseDTO> listWarehouse(String token);
 
 }

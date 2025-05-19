@@ -16,4 +16,6 @@ public interface WarehouseMapper {
     Warehouse selectCity();
 
     List<Warehouse> selectByLocation(int locationX, int locationY);
+
+    List<Warehouse> selectAll();
 }

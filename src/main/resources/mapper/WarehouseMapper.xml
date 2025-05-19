@@ -38,7 +38,10 @@
   <select id="selectCity" resultMap="BaseResultMap">
     select * from warehouse where warehouse_type = 'CITY'
   </select>
-  <select id="selectByLocation" resultType="com.qizhi.warehouse.domain.Warehouse">
+  <select id="selectByLocation" resultMap="BaseResultMap">
     select * from warehouse where location_x = #{locationX} and location_y = #{locationY}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select * from warehouse
   </select>
 </mapper>
