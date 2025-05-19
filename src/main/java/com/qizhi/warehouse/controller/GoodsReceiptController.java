@@ -15,7 +15,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 
 /**
- * user
+ * goodsReceipt
  */
 @Slf4j
 @RestController

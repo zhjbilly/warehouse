@@ -15,4 +15,8 @@ public interface GoodsReceiptItemMapper {
     int updateByPrimaryKey(GoodsReceiptItem record);
 
     int batchInsert(@Param("records") List<GoodsReceiptItem> records);
+
+    GoodsReceiptItem selectByReceiptIdAndGoodsName(@Param("receiptId")int receiptId, @Param("name")String name);
+
+    List<GoodsReceiptItem> selectByReceiptId(@Param("receiptId")int receiptId);
 }

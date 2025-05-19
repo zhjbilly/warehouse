@@ -16,7 +16,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
- * user
+ * warehouse
  */
 @Slf4j
 @RestController

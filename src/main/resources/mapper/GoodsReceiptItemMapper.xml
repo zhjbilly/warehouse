@@ -45,4 +45,10 @@
       (#{item.receiptId},#{item.name},#{item.amount},#{item.price})
     </foreach>
   </insert>
+  <select id="selectByReceiptIdAndGoodsName" resultType="com.qizhi.warehouse.domain.GoodsReceiptItem">
+    select * from goods_receipt_item where receipt_id = #{receiptId} and name = #{name}
+  </select>
+  <select id="selectByReceiptId" resultMap="BaseResultMap">
+    select * from goods_receipt_item where receipt_id = #{receiptId}
+  </select>
 </mapper>

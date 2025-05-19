@@ -4,7 +4,9 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.qizhi.user.constant.UserType;
 import com.qizhi.user.dto.UserDTO;
 import com.qizhi.warehouse.constant.WarehouseType;
+import com.qizhi.warehouse.dao.GoodsBatchMapper;
 import com.qizhi.warehouse.dao.WarehouseMapper;
+import com.qizhi.warehouse.domain.GoodsBatch;
 import com.qizhi.warehouse.domain.Warehouse;
 import com.qizhi.warehouse.dto.WareHouseDTO;
 import com.qizhi.warehouse.service.IWarehouseService;
@@ -28,6 +30,9 @@ public class WarehouseService implements IWarehouseService {
 
     @Autowired
     private WarehouseMapper warehouseMapper;
+
+    @Autowired
+    private GoodsBatchMapper goodsBatchMapper;
 
 
     @Override
@@ -72,12 +77,15 @@ public class WarehouseService implements IWarehouseService {
         // 用户校验
         userAuth(token);
         Warehouse warehouse = warehouseMapper.selectByPrimaryKey(warehouseId);
+        // 中心仓不能删除
         if(null == warehouse || WarehouseType.CITY.name().equals(warehouse.getWarehouseType())){
             throw new BizException("仓库不存在or城市仓不允许删除");
         }
-        // 中心仓不能删除
-        // TODO 有库存的不能删除
-
+        // 有库存的不能删除
+        List<GoodsBatch> goodsBatches = goodsBatchMapper.selectHasBatch(warehouseId);
+        if(!CollectionUtils.isEmpty(goodsBatches)){
+            throw new BizException("仓库存在库存，不能被删除");
+        }
         // 删除
         if(1 > warehouseMapper.deleteByPrimaryKey(warehouseId)){
             throw new BizException("删除仓库发生异常");
