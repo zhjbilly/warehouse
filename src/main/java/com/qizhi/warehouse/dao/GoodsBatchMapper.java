@@ -1,6 +1,7 @@
 package com.qizhi.warehouse.dao;
 
 import com.qizhi.warehouse.domain.GoodsBatch;
+import com.qizhi.warehouse.domain.Warehouse;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -29,4 +30,11 @@ public interface GoodsBatchMapper {
     List<GoodsBatch> selectByReceiptId(@Param("receiptId")int receiptId);
 
     List<GoodsBatch> selectHasBatch(int warehouseId);
+
+    List<Warehouse> selectWarehouseIdByCond(@Param("goodsName")String goodsName, @Param("amount")int amount);
+
+    List<GoodsBatch> selectByWarehouseId(@Param("warehouseId")int warehouseId, @Param("goodsName")String goodsName);
+
+    List<GoodsBatch> updateLocked(@Param("warehouseId")int warehouseId);
+
 }

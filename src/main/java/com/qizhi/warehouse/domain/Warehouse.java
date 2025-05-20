@@ -1,5 +1,10 @@
 package com.qizhi.warehouse.domain;
 
+import lombok.Data;
+
+import java.util.Objects;
+
+@Data
 public class Warehouse {
     private Integer warehouseId;
 
@@ -9,35 +14,17 @@ public class Warehouse {
 
     private Integer locationY;
 
-    public Integer getWarehouseId() {
-        return warehouseId;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Warehouse warehouse = (Warehouse) o;
+        return Objects.equals(warehouseId, warehouse.warehouseId);
     }
 
-    public void setWarehouseId(Integer warehouseId) {
-        this.warehouseId = warehouseId;
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(warehouseId);
     }
 
-    public String getWarehouseType() {
-        return warehouseType;
-    }
-
-    public void setWarehouseType(String warehouseType) {
-        this.warehouseType = warehouseType == null ? null : warehouseType.trim();
-    }
-
-    public Integer getLocationX() {
-        return locationX;
-    }
-
-    public void setLocationX(Integer locationX) {
-        this.locationX = locationX;
-    }
-
-    public Integer getLocationY() {
-        return locationY;
-    }
-
-    public void setLocationY(Integer locationY) {
-        this.locationY = locationY;
-    }
 }

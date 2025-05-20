@@ -106,5 +106,16 @@ public class WarehouseService implements IWarehouseService {
         return rlt;
     }
 
+    public List<WareHouseDTO> listWarehouse() {
+        List<Warehouse> warehouses = warehouseMapper.selectAll();
+        List<WareHouseDTO> rlt = new ArrayList<>();
+        for(Warehouse warehouse : warehouses){
+            WareHouseDTO single = new WareHouseDTO();
+            BeanUtils.copyProperties(warehouse, single);
+            rlt.add(single);
+        }
+        return rlt;
+    }
+
 
 }

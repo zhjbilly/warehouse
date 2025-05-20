@@ -12,6 +12,12 @@
     <result column="inward_date" jdbcType="TIMESTAMP" property="inwardDate" />
     <result column="receipt_id" jdbcType="INTEGER" property="receiptId" />
   </resultMap>
+  <resultMap id="warehouseMap" type="com.qizhi.warehouse.domain.Warehouse">
+    <id column="warehouse_id" jdbcType="INTEGER" property="warehouseId" />
+    <result column="warehouse_type" jdbcType="VARCHAR" property="warehouseType" />
+    <result column="location_x" jdbcType="INTEGER" property="locationX" />
+    <result column="location_y" jdbcType="INTEGER" property="locationY" />
+  </resultMap>
   <sql id="Base_Column_List">
     id, goods_name, warehouse_id, shelf_position, in_amount, out_amount, locked_amount, 
     inward_date, receipt_id
@@ -78,7 +84,7 @@
       receipt_id = #{receiptId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
-<!---->
+  <!---->
   <select id="selectByReceiptIdAndName" resultMap="BaseResultMap">
     select * from goods_batch where receipt_id = #{receiptId} and goods_name = #{name}
   </select>
@@ -98,6 +104,18 @@
     select * from goods_batch where  receipt_id = #{receiptId}
   </select>
   <select id="selectHasBatch" resultMap="BaseResultMap">
-    select * from goods_batch where warehouse_id = #{warehouseId} and in_amount - out_amount - locked_amount > 0
+    select * from goods_batch where warehouse_id = #{warehouseId} and in_amount - locked_amount > 0
   </select>
+  <select id="selectWarehouseIdByCond" resultMap="warehouseMap">
+    select w.* from goods_batch b
+    left join warehouse w on b.warehouse_id = w.warehouse_id
+    where b.goods_name = #{goodsName} and b.in_amount - b.locked_amount > #{amount} and w.warehouse_type == 'FRONT'
+  </select>
+  <select id="selectByWarehouseId" resultMap="BaseResultMap">
+    select * from goods_batch where warehouse_id = #{warehouseId} and goods_name = #{goodsName} and in_amount - lock_amount > 0 order by inward_date
+  </select>
+  <update id="updateLocked">
+    update goods_batch set locked_amount == 0
+    where warehouse_id = #{warehouseId} locked_amount != 0
+  </update>
 </mapper>

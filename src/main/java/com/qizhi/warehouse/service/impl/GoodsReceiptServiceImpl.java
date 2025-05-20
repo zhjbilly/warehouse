@@ -107,7 +107,7 @@ public class GoodsReceiptServiceImpl implements IGoodsReceiptService {
         // 库存校验
         List<GoodsReceiptItem> goodsReceiptItems = goodsReceiptItemMapper.selectByReceiptId(goodsReceiptId);
         List<GoodsBatch> goodsBatches = goodsBatchMapper.selectByReceiptId(goodsReceiptId);
-        if (goodsReceiptItems.stream().anyMatch(item -> goodsBatches.stream().noneMatch(batch -> batch.getGoodsName().equals(item.getName()) || batch.getInAmount().equals(item.getAmount())))) {
+        if (goodsReceiptItems.stream().anyMatch(item -> goodsBatches.stream().noneMatch(batch -> batch.getGoodsName().equals(item.getName()) || item.getAmount().equals(batch.getInAmount() + batch.getOutAmount() - batch.getLockedAmount())))) {
             // 未完成全入库，无法关闭
             throw new BizException("进货单未全部入库，无法关闭");
         }

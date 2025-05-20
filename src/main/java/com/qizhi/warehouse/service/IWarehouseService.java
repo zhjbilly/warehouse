@@ -30,4 +30,10 @@ public interface IWarehouseService {
      */
     List<WareHouseDTO> listWarehouse(String token);
 
+    /**
+     * 仓库列表（无鉴权）
+     * @return
+     */
+    List<WareHouseDTO> listWarehouse();
+
 }
