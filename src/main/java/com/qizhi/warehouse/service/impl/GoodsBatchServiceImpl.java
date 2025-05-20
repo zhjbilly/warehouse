@@ -16,6 +16,7 @@ import com.qizhi.warehouse.domain.GoodsReceiptItem;
 import com.qizhi.warehouse.domain.Warehouse;
 import com.qizhi.warehouse.dto.*;
 import com.qizhi.warehouse.service.IGoodsBatchService;
+import com.qizhi.warehouse.service.ITransactionLogService;
 import com.qizhi.warehouse.util.BizException;
 import com.qizhi.warehouse.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -46,12 +47,16 @@ public class GoodsBatchServiceImpl implements IGoodsBatchService {
     @Autowired
     private WarehouseMapper warehouseMapper;
 
+    @Autowired
+    private ITransactionLogService transactionLogService;
+
+    @Transactional
     @Override
     public void in(AddGoodsBatch addGoodsBatch) {
-        userAuth(addGoodsBatch.getToken());
+        UserDTO user = userAuth(addGoodsBatch.getToken());
         // 入库单校验
         GoodsReceipt goodsReceipt = goodsReceiptMapper.selectByPrimaryKey(addGoodsBatch.getReceiptId());
-        if(null == goodsReceipt || Const.closed == goodsReceipt.getIsClosed()){
+        if(null == goodsReceipt || Const.CLOSED == goodsReceipt.getIsClosed()){
             throw new BizException("进货单不存在or已被关闭");
         }
         // 根据货物名称查找批次
@@ -92,13 +97,19 @@ public class GoodsBatchServiceImpl implements IGoodsBatchService {
                 }
             }
         }
-        // TODO 增加操作入库
+        // TODO 增加操作入库（待改为切面）
+        AddTransactionLogDTO addTransactionLogDTO = new AddTransactionLogDTO();
+        addTransactionLogDTO.setActorType(Const.IMPORT);
+        addTransactionLogDTO.setGoodsName(addGoodsBatch.getGoodsName());
+        addTransactionLogDTO.setAmount(addGoodsBatch.getAmount());
+        addTransactionLogDTO.setUserId(user.getUserId());
+        transactionLogService.addTransactionLog(addTransactionLogDTO);
     }
 
     @Transactional
     @Override
     public void transfer(TransferGoods transferGoods) {
-        userAuth(transferGoods.getToken());
+        UserDTO user =  userAuth(transferGoods.getToken());
         // 仓库校验
         Warehouse source = warehouseMapper.selectByPrimaryKey(transferGoods.getSourceWare());
         if (null == source) {
@@ -143,16 +154,22 @@ public class GoodsBatchServiceImpl implements IGoodsBatchService {
             }
         }
         // TODO 增加操作调拨
+        AddTransactionLogDTO addTransactionLogDTO = new AddTransactionLogDTO();
+        addTransactionLogDTO.setActorType(Const.TRANSFER);
+        addTransactionLogDTO.setGoodsName(transferGoods.getGoodsName());
+        addTransactionLogDTO.setAmount(transferGoods.getAmount());
+        addTransactionLogDTO.setUserId(user.getUserId());
+        transactionLogService.addTransactionLog(addTransactionLogDTO);
     }
 
     @Override
     public List<GoodsBatchDTO> view(ViewGoosBatch viewGoodsBatch) {
         userAuth(viewGoodsBatch.getToken());
         List<GoodsBatch> goodsBatches = null;
-        if(Const.goodsName.equals(viewGoodsBatch.getSearchType())){
+        if(Const.GOODS.equals(viewGoodsBatch.getSearchType())){
             // 货物搜索
             goodsBatches = goodsBatchMapper.selectByWareAndNameLike(viewGoodsBatch.getWarehouseId(), viewGoodsBatch.getSearchValue());
-        }else if(Const.shelfPos.equals(viewGoodsBatch.getSearchType())){
+        }else if(Const.SHELF.equals(viewGoodsBatch.getSearchType())){
             // 货架搜索
             goodsBatches = goodsBatchMapper.selectByWareAndShelf(viewGoodsBatch.getWarehouseId(), Integer.parseInt(viewGoodsBatch.getSearchValue()));
         }else{
@@ -169,9 +186,10 @@ public class GoodsBatchServiceImpl implements IGoodsBatchService {
         return rlt;
     }
 
+    @Transactional
     @Override
     public void adjust(AdjustGoodsBatch adjustGoodsBatch) {
-        userAuth(adjustGoodsBatch.getToken());
+        UserDTO user =  userAuth(adjustGoodsBatch.getToken());
         // 库存校验
         GoodsBatch goodsBatch = goodsBatchMapper.selectByPrimaryKey(adjustGoodsBatch.getBatchId());
         if(null == goodsBatch){
@@ -180,11 +198,21 @@ public class GoodsBatchServiceImpl implements IGoodsBatchService {
         if(adjustGoodsBatch.getNewAmount() < goodsBatch.getLockedAmount()){
             throw new BizException("不能设置低于锁定数量");
         }
+        // 调整数量
+        int adjustAmount = goodsBatch.getInAmount() - goodsBatch.getOutAmount() - goodsBatch.getLockedAmount() - adjustGoodsBatch.getNewAmount();
         goodsBatch.setInAmount(adjustGoodsBatch.getNewAmount());
         if(1 > goodsBatchMapper.updateByPrimaryKeySelective(goodsBatch)){
             throw new BizException("调整库存失败");
         }
         // TODO 增加库存调整操作日志
+        AddTransactionLogDTO addTransactionLogDTO = new AddTransactionLogDTO();
+        addTransactionLogDTO.setActorType(Const.TRANSFER);
+        addTransactionLogDTO.setGoodsName(goodsBatch.getGoodsName());
+        // 调整数量
+        addTransactionLogDTO.setAmount(adjustAmount);
+        addTransactionLogDTO.setUserId(user.getUserId());
+        addTransactionLogDTO.setReason(adjustGoodsBatch.getReason());
+        transactionLogService.addTransactionLog(addTransactionLogDTO);
     }
 
     private UserDTO userAuth(String token){

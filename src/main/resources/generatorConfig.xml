@@ -39,10 +39,10 @@
 
         <!--对应数据库表名 -->
 
-        <table tableName="goods_batch"
+        <table tableName="transaction_log"
         enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
         enableSelectByExample="false" selectByExampleQueryId="false" >
-        <property name="goodsBatch" value="false"/>
+        <property name="transactionLog" value="false"/>
         </table>
 
 

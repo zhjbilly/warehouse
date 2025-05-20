@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qizhi.warehouse.dao.TransactionLogMapper">
+  <resultMap id="BaseResultMap" type="com.qizhi.warehouse.domain.TransactionLog">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="action_type" jdbcType="VARCHAR" property="actionType" />
+    <result column="actor" jdbcType="INTEGER" property="actor" />
+    <result column="operate_date" jdbcType="TIMESTAMP" property="operateDate" />
+    <result column="goods" jdbcType="VARCHAR" property="goods" />
+    <result column="amount" jdbcType="INTEGER" property="amount" />
+    <result column="reason" jdbcType="VARCHAR" property="reason" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, action_type, actor, operate_date, goods, amount, reason
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from transaction_log
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from transaction_log
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.qizhi.warehouse.domain.TransactionLog">
+    insert into transaction_log (id, action_type, actor, 
+      operate_date, goods, amount, 
+      reason)
+    values (#{id,jdbcType=INTEGER}, #{actionType,jdbcType=VARCHAR}, #{actor,jdbcType=INTEGER}, 
+      #{operateDate,jdbcType=TIMESTAMP}, #{goods,jdbcType=VARCHAR}, #{amount,jdbcType=INTEGER}, 
+      #{reason,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.qizhi.warehouse.domain.TransactionLog">
+    update transaction_log
+    <set>
+      <if test="actionType != null">
+        action_type = #{actionType,jdbcType=VARCHAR},
+      </if>
+      <if test="actor != null">
+        actor = #{actor,jdbcType=INTEGER},
+      </if>
+      <if test="operateDate != null">
+        operate_date = #{operateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="goods != null">
+        goods = #{goods,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null">
+        amount = #{amount,jdbcType=INTEGER},
+      </if>
+      <if test="reason != null">
+        reason = #{reason,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.qizhi.warehouse.domain.TransactionLog">
+    update transaction_log
+    set action_type = #{actionType,jdbcType=VARCHAR},
+      actor = #{actor,jdbcType=INTEGER},
+      operate_date = #{operateDate,jdbcType=TIMESTAMP},
+      goods = #{goods,jdbcType=VARCHAR},
+      amount = #{amount,jdbcType=INTEGER},
+      reason = #{reason,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+<!---->
+  <select id="selectByGoodsName" resultMap="BaseResultMap">
+    select * from transaction_log where goods = #{goodsName} order by operate_date
+  </select>
+</mapper>

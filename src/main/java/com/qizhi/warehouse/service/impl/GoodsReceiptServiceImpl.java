@@ -53,7 +53,7 @@ public class GoodsReceiptServiceImpl implements IGoodsReceiptService {
         // 保存
         GoodsReceipt goodsReceipt = new GoodsReceipt();
         BeanUtils.copyProperties(addGoodsReceipt.getGoodsReceipt(), goodsReceipt);
-        goodsReceipt.setIsClosed(Const.open);
+        goodsReceipt.setIsClosed(Const.OPEN);
         goodsReceipt.setCloseDateTime(DateUtils.getNowDate());
         goodsReceipt.setSupplier(null);
         if (1 > goodsReceiptMapper.insert(goodsReceipt)) {
@@ -87,7 +87,7 @@ public class GoodsReceiptServiceImpl implements IGoodsReceiptService {
         userAuth(token);
         // 进货单存在or未关闭
         GoodsReceipt goodsReceipt = goodsReceiptMapper.selectByPrimaryKey(goodsReceiptId);
-        if (null == goodsReceipt || Const.closed == goodsReceipt.getIsClosed()) {
+        if (null == goodsReceipt || Const.CLOSED == goodsReceipt.getIsClosed()) {
             throw new BizException("进货单不存在or已关闭，不能更新供应商");
         }
         goodsReceipt.setSupplier(suppler);
@@ -101,7 +101,7 @@ public class GoodsReceiptServiceImpl implements IGoodsReceiptService {
         userAuth(token);
         // 进货单存在or已关闭
         GoodsReceipt goodsReceipt = goodsReceiptMapper.selectByPrimaryKey(goodsReceiptId);
-        if (null == goodsReceipt || Const.closed == goodsReceipt.getIsClosed()) {
+        if (null == goodsReceipt || Const.CLOSED == goodsReceipt.getIsClosed()) {
             throw new BizException("进货单不存在or已关闭，不能关闭");
         }
         // 库存校验
@@ -112,7 +112,7 @@ public class GoodsReceiptServiceImpl implements IGoodsReceiptService {
             throw new BizException("进货单未全部入库，无法关闭");
         }
         // 关闭
-        goodsReceipt.setIsClosed(Const.closed);
+        goodsReceipt.setIsClosed(Const.CLOSED);
         if (1 > goodsReceiptMapper.updateByPrimaryKey(goodsReceipt)) {
             throw new BizException("进货单关闭失败");
         }
